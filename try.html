@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact + To-Do</title>
+  <link rel="stylesheet" href="try.css" />
+</head>
+<body>
+
+  <div class="main-container">
+    <!-- Contact Form Section -->
+    <div class="form-section">
+      <div class="image-box">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdnOnOVPzbsemkgOVe8aJuDXqhO7Nn2_PBfw&s" alt="Contact Form Design" />
+      </div>
+
+      <form class="contact-form" id="contactForm">
+        <h2>Contact Us</h2>
+        <input type="text" id="name" placeholder="Your Name" required />
+        <input type="email" id="email" placeholder="Your Email" required />
+        <textarea id="message" placeholder="Your Message" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+
+    <!-- To-Do List Section -->
+    <div class="todo-section">
+      <h2>To-Do List</h2>
+      <div class="todo-input">
+        <input type="text" id="taskInput" placeholder="Add a task" />
+        <button onclick="addTask()">Add</button>
+      </div>
+      <ul id="taskList"></ul>
+    </div>
+  </div>
+
+  <script src="try.js"></script>
+</body>
+</html>
