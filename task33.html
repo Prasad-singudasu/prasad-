@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nature & Quiz</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(-45deg, #2c3e50, #3498db, #8e44ad, #e74c3c);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      padding: 20px;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .main-container {
+      backdrop-filter: blur(15px);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 1300px;
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    }
+
+    .left-section, .right-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .title {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .title h2 {
+      font-size: 120px;
+      color: white;
+      text-shadow: 0 0 5px rgb(60, 0, 8), 0 0 10px rgb(97, 0, 13), 0 0 20px rgb(37, 90, 250);
+    }
+
+    .title h1 {
+      font-size: 50px;
+      color: white;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      text-shadow: 0 0 5px #00f, 0 0 10px #0ff;
+    }
+
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      overflow: hidden;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .carousel-slides {
+      display: flex;
+      transition: transform 0.6s ease;
+    }
+
+    .slide {
+      min-width: 100%;
+      height: 350px;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .nav-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.5);
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 50%;
+    }
+
+    .nav-button:hover {
+      background: rgba(255,255,255,0.9);
+    }
+
+    .prev {
+      left: 15px;
+    }
+
+    .next {
+      right: 15px;
+    }
+
+    .indicators {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+    }
+
+    .indicator {
+      width: 12px;
+      height: 12px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .indicator.active {
+      background: white;
+    }
+
+    .right-section {
+      max-width: 500px;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 20px;
+      padding: 30px;
+      color: white;
+    }
+
+    .right-section h3 {
+      font-size: 30px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .right-section img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .right-section p {
+      font-size: 18px;
+      margin: 20px 0 10px;
+    }
+
+    .option {
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .option.correct {
+      background-color: #28a745;
+    }
+
+    .option.wrong {
+      background-color: #dc3545;
+    }
+
+    .option input {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+
+    .right-section button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: orange;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .right-section button:hover {
+      background: darkorange;
+    }
+
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 900px) {
+      .main-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .title h2 {
+        font-size: 80px;
+      }
+
+      .title h1 {
+        font-size: 40px;
+      }
+
+      .slide {
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="main-container">
+  <!-- Left Section: Nature -->
+  <div class="left-section">
+    <div class="title">
+      <h2>N</h2>
+      <h1>ature</h1>
+    </div>
+
+    <div class="carousel-container">
+      <div class="carousel-slides" id="carouselSlides">
+        <div class="slide"><img src="https://picsum.photos/id/1015/800/450" alt="Slide 1"></div>
+        <div class="slide"><img src="https://picsum.photos/id/1016/800/450" alt="Slide 2"></div>
+        <div class="slide"><img src="data:image/jpeg;base64,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" alt="Slide 3"></div>
+      </div>
+      <button class="nav-button prev" onclick="moveSlide(-1)">&#10094;</button>
+      <button class="nav-button next" onclick="moveSlide(1)">&#10095;</button>
+      <div class="indicators" id="indicators"></div>
+    </div>
+  </div>
+
+  <!-- Right Section: Quiz -->
+  <div class="right-section">
+    <h3>Nature Quiz</h3>
+    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=600&q=80" alt="Quiz Banner">
+
+    <p id="questionText">Which of the following is the largest rainforest in the world?</p>
+    <div class="option"><input type="radio" name="quiz" value="Congo" /> A. Congo Rainforest</div>
+    <div class="option"><input type="radio" name="quiz" value="Amazon" /> B. Amazon Rainforest</div>
+    <div class="option"><input type="radio" name="quiz" value="Daintree" /> C. Daintree Rainforest</div>
+    <div class="option"><input type="radio" name="quiz" value="Sundarbans" /> D. Sundarbans</div>
+
+    <button onclick="checkAnswer()">Submit</button>
+    <button onclick="nextQuestion()">Next</button>
+    <div class="result" id="result"></div>
+  </div>
+</div>
+
+<script>
+  // Carousel Logic
+  const slides = document.querySelectorAll(".slide");
+  const indicatorsContainer = document.getElementById("indicators");
+  const carouselSlides = document.getElementById("carouselSlides");
+  let currentIndex = 0;
+
+  slides.forEach((_, i) => {
+    const dot = document.createElement("div");
+    dot.classList.add("indicator");
+    if (i === 0) dot.classList.add("active");
+    dot.setAttribute("data-index", i);
+    dot.onclick = () => moveToSlide(i);
+    indicatorsContainer.appendChild(dot);
+  });
+
+  const updateCarousel = () => {
+    carouselSlides.style.transform = `translateX(-${currentIndex * 100}%)`;
+    document.querySelectorAll(".indicator").forEach((dot, index) => {
+      dot.classList.toggle("active", index === currentIndex);
+    });
+  };
+
+  const moveSlide = step => {
+    currentIndex = (currentIndex + step + slides.length) % slides.length;
+    updateCarousel();
+  };
+
+  const moveToSlide = index => {
+    currentIndex = index;
+    updateCarousel();
+  };
+
+  setInterval(() => moveSlide(1), 4000);
+
+  // Quiz Logic
+  const questions = [
+    {
+      question: "Which of the following is the largest rainforest in the world?",
+      options: ["Congo", "Amazon", "Daintree", "Sundarbans"],
+      answer: "Amazon"
+    },
+    {
+      question: "Which gas do plants absorb from the atmosphere?",
+      options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Helium"],
+      answer: "Carbon Dioxide"
+    },
+    {
+      question: "Which part of the plant conducts photosynthesis?",
+      options: ["Root", "Stem", "Flower", "Leaf"],
+      answer: "Leaf"
+    }
+  ];
+
+  let currentQ = 0;
+
+  function loadQuestion() {
+    const q = questions[currentQ];
+    document.getElementById("questionText").textContent = q.question;
+    const opts = document.querySelectorAll(".option");
+    opts.forEach((opt, i) => {
+      const radio = opt.querySelector("input");
+      radio.value = q.options[i];
+      radio.checked = false;
+      opt.classList.remove("correct", "wrong");
+      opt.innerHTML = `<input type="radio" name="quiz" value="${q.options[i]}"> ${String.fromCharCode(65 + i)}. ${q.options[i]}`;
+    });
+    document.getElementById("result").textContent = "";
+  }
+
+  function checkAnswer() {
+    const correct = questions[currentQ].answer;
+    const selected = document.querySelector('input[name="quiz"]:checked');
+    const options = document.querySelectorAll(".option");
+    const resultDiv = document.getElementById("result");
+
+    options.forEach(opt => opt.classList.remove("correct", "wrong"));
+
+    if (!selected) {
+      resultDiv.textContent = "Please select an option!";
+      resultDiv.style.color = "#ffc107";
+      return;
+    }
+
+    const userAns = selected.value;
+    const parentDiv = selected.closest(".option");
+
+    if (userAns === correct) {
+      parentDiv.classList.add("correct");
+      resultDiv.textContent = "Correct!";
+      resultDiv.style.color = "#28a745";
+    } else {
+      parentDiv.classList.add("wrong");
+      resultDiv.textContent = `Wrong! Correct answer is: ${correct}.`;
+      resultDiv.style.color = "#fff";
+      options.forEach(opt => {
+        if (opt.textContent.includes(correct)) {
+          opt.classList.add("correct");
+        }
+      });
+    }
+  }
+
+  function nextQuestion() {
+    currentQ = (currentQ + 1) % questions.length;
+    loadQuestion();
+  }
+
+  window.onload = loadQuestion;
+</script>
+
+</body>
+</html>
