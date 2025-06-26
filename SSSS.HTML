@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Listing</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f5;
+      margin: 0;
+      padding: 2rem;
+      background-color: #ff9529;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .controls select {
+      padding: 10px;
+      font-size: 1rem;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 1rem;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .product:hover {
+      transform: scale(1.02);
+    }
+
+    .product img {
+      max-width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .product h3 {
+      margin: 0.5rem 0;
+      font-size: 1.1rem;
+    }
+
+    .product .price {
+      color: green;
+      font-weight: bold;
+    }
+
+    .rating {
+      color: #ff9529;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🛒 Product Listing</h1>
+
+  <div class="controls">
+    <select id="categoryFilter">
+      <option value="all">All Categories</option>
+      <option value="electronics">Electronics</option>
+      <option value="fashion">Fashion</option>
+      <option value="books">Books</option>
+      <option value="home">Home</option>
+    </select>
+
+    <select id="priceFilter">
+      <option value="all">All Prices</option>
+      <option value="0-50">Below ₹50</option>
+      <option value="51-150">₹51 to ₹150</option>
+      <option value="151-500">₹151 to ₹500</option>
+    </select>
+
+    <select id="sortByRating">
+      <option value="none">Sort by Rating</option>
+      <option value="high">High to Low</option>
+      <option value="low">Low to High</option>
+    </select>
+  </div>
+
+  <div class="products" id="productList"></div>
+
+  <script>    const products = [
+      {
+        name: "Wireless Headphones", 
+        category: "electronics",
+        price: 499,
+        rating: 4.5,
+        image: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxASEhUPEBAQFRUQExAVGBAVEBAVFRUYFRIYFhUWFRgYHSggGBolHxUVITUhJSkrLi4uFx8zODMsNygtLisBCgoKDg0OFxAQGy0lHSUrLS0rNS0tLS0tLSstLSstLSsrLS0tNysrLS0tLS0tKy0rLS0tKy0tLSstLSstKystK//AABEIAOEA4QMBIgACEQEDEQH/xAAcAAEAAAcBAAAAAAAAAAAAAAAAAgMEBQYHCAH/xABKEAACAQMABgYGBgUJCAMAAAAAAQIDBBEFEiExQVEGBxNhcZEUIjJSgaEjQoKSscFicqKy0XODk7PCw9Lw8TNDRFNjdKPhJDQ1/8QAGAEBAQEBAQAAAAAAAAAAAAAAAAECAwT/xAAhEQEBAQEAAgIBBQAAAAAAAAAAAQIRAzESIUEEEyJRcf/aAAwDAQACEQMRAD8A3iAAAAAAAAAAAAAAwzpb1hW9o3RpLt68djhGWIU3yqT27f0Um+eDWGl+nmka7etdSpxf+7ofRJfaWZ/tHTHi1pLqR0EDmN6Zrv8A4u68fSq/+Ijhpu+jtp392u70mt/iN39PpPlHTIOcbbrD0tRePS5yxwqQpzT+Ljn5mSaL65bmOy4tqNRc6bnTl89ZN+RzuK03UDC9C9Z2ja+FOpKhJ8KyUY/fTcUvFozKlUjJKUWpJrKkmmmuaa3mbOCIAEAAAAAAAAAAAAAAAAAAAAAAAAA1f1k9PHBysrOeHHMatxF7YvjTpvhLnJbty25xe+szpW7Oj2FGWK9dPElvpw3Sn4vcu/L+qc9X95n1Y7kejw+Pv8qzq/hNutIY2R8yidaT3tkhE2KPT1hNgu8rbeDbSTlltJJbcvgsF06G9ErnSFTUpLVhHGvWknqQT/GXKP4Lab96LdDbOwiuxp61THrV54dR88P6q7l8znvyzKydaE0joO6pU41Lm3q04TeI1ZQlFN8nnam+/fw3FgqQcXhnWl7aU61OVGrCM4VE4yhJZTTOe+sPojKxraq1pUp5lSqPe4r2qcn70c/FNPnjnNzf+tc4xKEjJeinS27sZJ0Z5pt+tQk26cueF9WX6S+OdxjMEVNIyrpfov0joX1HtaLw1hTpP2qcuT5rk+PmleTnDovpqrZ1416T3bJQzsnBvbF/k+DSZ0LovSFO4pQr0nmFSKa5rmnyaeU+9HLWeKqgAZAAAAAAAAAAAAAAAAAAACnv7yFGnOvUeIUoynJ90Vl45vuKg1j11af7OlCyi9tTFWp+pFtU4vxkm/5vvNYz8rxLeNU9MNPVLmvUrzfrVZZ1c+xFbIQXgsLveXxMZbIq9Rybb4nkUe719RzRRRkHQ/o3Vv7iNvS2L2p1MbKcFvk/wS4tosdOGXhJvPBbzpbq26KqwtEpxXb1sTqvinj1afhFPHi2+Jz3v4xZOr9oPRFG0oxt6ENWEF8ZPjKT4yfMrwDx29dAsvS/QMb21nbvCl7VOb+pUivVfhvT7pMvQLLy9g5OrW0oTlTlFqUJNOONsWm04vvTTXwJlOD5PyZsXrR0QqN6q0ViF3HX/nFiNRf1cvGTLFbUjvJ8vuOd1xYKLNmdUuntSpKym/VrZnTzwml60V4xWfGPeWSnQi/ajF+KT/EnW9lThONWEdWdOUZxlFtYcXlbN3At8fYn7jdoJNlcqpTjVjunFS81uJx5nUAAAAAAAAAAAAAAAAAAHjZy/wBYGnHdXVWsnmM5vV/k4+rT80k/Fs391haT9HsK808SnHso435qPVyu9Jyl9k5du6mtNvvPT4J7rGkqKJsUQxRNijsyz7qc6Oek3vbzjmlZqNR8nUb+ij8MOX2VzOhDD+qnQfoujqWVipc/TzytvrpaifLEFFY55MwPJ5dd06Zn0AA5qAADB+uDRnbaPlVj7VtONRY93OrNeGJZ+yjSVKXFN+Z01pazVehVoS3VqVSD+3Fx/M5ht8pYe+OU/FPD/A6YqLhRuai3VJ/fl/Er6GlKy+vnucY/ltLVBk6Ejp2pZG6OrHS7r20qcsa1CeMLPszWtF7e/X8jMTUXVJe6t3OlwrUn8ZU5Jr5OZt0479rAAGVAAAAAAAAAAAAAAAAao6+dJ6tOhbp73UqvxSUIfv1PI0bFGxOu+/7S/lTz/sYUqf7PaP8Arfka+po9vjnMxzvtHFF36LaK9Ku6FrjZWqwUv1F61T9mMi1xRsvqL0dr3tS4a2W9HC/Wqywn92NRfEuryWjekYpLC3LgegHhdAAAAAAOaOk1v2V7dUvduazXhKWtH5SR0uc9daNLU0rc/p9hPzoxT+cWbx7FgjInRkUcZE2MjojJ+g112d/bS51VD+ki6f8AaN/HM+irjUrUqnuVaUvuzT/I6YOeyAAMKAAAAAAAAAAAAAAAA5Y6wrvtdIXEv+tWXwjNxXyiix00TNJXHaVp1Pfet97b+Z5BHvk59OSOKN49RFlq2dau1trV8J/o04RS/alM0gkdG9U9t2ei7fnNVZ/fqza+WDn5vrK59suAB5HQAKTSuk6NtSlXuKkacIb5P5JJbZN8ltYFWSri5p01rVJwgvelJRXmzSfS3rduKjdOxj2NPau2koyqy70nmMF5vvRrK/0jWrS161WpUk/rTnKcvOTNTI6jl0v0Ynh6Qs8/9zS/iaY62rulV0j2lGpTqQlb0fXpzjOOVKaazF4zuNbyuprcVdtVckm9+01JxFfGRMjIpYyJikaFS6mx+B1PCWUnzSZyhOWx+DOq7OWacHzhD91GNqnAAwAAAAAAAAAAAAAASbyWKc3yhJ+UWTim0n/sav8AJ1P3WBy9eWdNS2QSxnds3Fj9N5Rj8VJf2yfO8qynL1+L3qPPwJEbVPYl8ztrV/FYk/tcdFuFVuOGsLOU8ccccnT3RC3VOxtqa3Rt6P7iZy1o+q6TcoJbVjblrYdWdH3m1t3zoUH500Z1q3P2sn2uAAObSk0rpKlbUp3FaWrCmst8e5JcW3hJc2c79NulFa/q9pUbjTjns6OfVgub5zfF/kZR1rdJXcV3a05fRW0mnh7J1d0n4R2xXfrdxrO8qcDpmIpKsskMUeESKKW4iVVp7K/zxKe7luit7KumsbCQT4sjTJcSNGhE9x1PoOprW1CXvUaL86aZyzFHSnV/c9po20lnOKEIN99P6N/OLM7VkAAOYAAAAAAAAAAAAABKuoa0JR5xkvNE0AcdUKblJ4K2Ns+/5E1Wsad1Woy3U6lSHHfGeNuPBnlavHWagsrLwzqiBUX/AJR1J0Ynmztnzt7f+qicw04Tf+hk2jemWk6EYwp3c9WmlGNOUKUoqKWFH1ot4x3izo6LLL0x0x6JaVa69tR1YfrzerHxxnPgma90L1t1ViN3QhNe/SerL7sm1LzRI6y+llC8p0IW024pzqTi4yjKMsKME0+5z5ox8b1Wu7qeOPxby/Flmrvbj4vx5fAuN1LLx8X4LaWyfPmbqICCrVxsW/8AAinLCKSWW9Vcd7AitKeZa7244lyginpRSWFwJ/aJbX5CCojEjUC3VLqb3er4bX8yBXE/eZRd4wNvdTWndktHze5Sq0vDK7SK+LUvjI0rbaRw8T3c0ZRoXSLt6lK7g/8A61SFR44091VfGDn8hZ2DpQEMJppSTymk0+ae4iOKgAAAAAAAAAAAAAeSkkst4S4nph3Wnpd0LJ04vE7qXZbN6hjNR+S1ftlg0d0uq0nc3NahlxuK9WcZNYzGUm9nJPOS02NHLJumHtRFox7UdUT7+5jTWOJZZ6VkQ9Ibj6WUc7sfgWjXJaL3R0ky70K2tDW5mHKZk1hP6KHgJRFVedZ9yXm//RRTKqctj8fyX8SkqvCb5AUlee98iK2hhZe9khrLjHm9pWkDOCF7SJI9wUQqm2m0nhYy8PCzuyQuJfKNvJ2yjBZdSo2/BbMvyRbrm2nDZJb+O9F4kqiaLx0eusPs5buHhxRamiZZSxUi+/HnsCupug1Zy0fatttxowg5Pe3TXZtvveqX0xrq3/8AzbfPGNR+dWbMlOV9qAAgAAAAAAAAAAAah657vNzQo/8ALoyn/STa/ujbxpPrjeNIR77Wi/8Ay1Uaz7GudKrKzyJVhPaifebUy3UJ4eDohp+3+k1+E4p/FbH+RaZ25kten2tPV+tHbHv5osuCWC2yg0ZDoyeaUfBryeC2zp5K3RbxDV5N/Pb/ABJJyifVf+fIo7qXqv4FZVW0pb+PqN8sGqKWhtn4RZVlJZ+19llbqkgQWwMmUlsXgQ1FxAuN5WlGjShFtKUW2154+bKepNuitZt+v6ueWP8AUUL9xjqSjGaW5PgU9xXc3l/BLcjXUkSSKh7Ue558tp7gvPQvQzu72jbpZU5rX7oL1qj+6mvFoyrpHofaulY2tOSxKNvR1lyk4JyXm2Xg8SPTkoAAAAAAAAAAAAAGm+vKhq3FtV4To1IZ/Umn/eG5DAOufRTq2KrRWXa1FJ/qT9SXzcH8DWfY0XVkW+utuUVjZIqwOiJlncHukLXP0sPtR/NFBti8or7W7ILaTLOeJY94r7mxU/Wp4T4x4Pw5FqqpxeGmmgLtOOxMhr0daDXNHtpVU4/LwZOgUY9aTxJZ4PD/AAZd3Et+krfUlrrdL5MqrWupLHFGYJsHjZ8SJkEkea/M0DghhIOQSb3EEL7jenUr0VdCi7+rHE7iOKaa2xpZzrfbaT8Ix5mE9VvQn02t29aP/wAai1rZWyrNbVTX6K2OXds47OgksbFw4GdX8K9ABgAAAAAAAAAAAAAAk3dtCrCVKpFShUjKMovipLDXzJwA5h6W9H6ljczt55ai8xn78H7MvyfemWjUydF9P+iMdIUfVxGvSy6c3ued9OX6Lxv4PbzT0DdWVSjOVKrCUJweJQksNPk/47mscNp1l6i11aJRzg1tRfXTTKatblFFb3mNjK3tYTWJJPxKCtQJGJLcyC7UrKEXrU21nhltEU+fmW2ndSRPjfdxRMrpNYe5lpq20oPMNq+aLrsltj93j8OZJyLBR0r/AITT8cFRG7pv6y+ZE6ae9I9hRjlLCy2klxbe5LmyD2NWLawnLmllZ+JlfQbohW0hW1UnClBp1KvCK91PjN8F8WXnoZ1YXVy1UuYyt6Ox4lHFaa5Rg/Y8ZL4M3honRdG2pRoW9NQhBbIrjzcm9sm+b2mbpUWjNH0relChRgowprEYr8Xzb3t95VAGAAAAAAAAAAAAAAAAAAAAx/pX0Rtr+P0qcakViNeONddz96Pc/hh7TIDxgaC6QdAL61baputTW6rSUpbP0oL1o/NLmYpVjzOoasZ8GWDS+gnX21KNCb5zpQk/NrJubHOVWKKSpTNzaT6sVPLhDs2/cm0vJ5XkY/X6p73PqzpNd7kn8ol+URrN0yKnRZsmj1T3efXqUku7Wb+aRl3RroRTtJKoqcZVI7qk8ScXzisYi+/Ge8fKC3dVPV7KEo395BxccSo0JLDT4VJp7scE/HkbD0t0T0fcvWuLShOT+vqKM/vxxL5kdK5qL2mTlesxarH11X6Gzn0P4ekXWP3y+aI6NWNrttrWhTfvxpx134z9p+ZN9NPfTR0V4KFXhHG6IKsEmNYjUwIweZPQAAAAAAAAAAAAAAAAAAAAABg8cT0AQOmiB0ETgBTO1R56IiqAFL6Ih6IiqAFMrVEStkTwBLVJESiRADzB6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB//9k="
+      },
+      {
+        name: "Smart Watch",
+        category: "electronics",
+        price: 299,
+        rating: 4.0,
+        image: "https://via.placeholder.com/200x150.png?text=Smart+Watch"
+      },
+      {
+        name: "T-Shirt",
+        category: "fashion",
+        price: 99,
+        rating: 3.8,
+        image: "https://via.placeholder.com/200x150.png?text=T-Shirt"
+      },
+      {
+        name: "Denim Jeans",
+        category: "fashion",
+        price: 199,
+        rating: 4.2,
+        image: "https://via.placeholder.com/200x150.png?text=Jeans"
+      },
+      {
+        name: "Self-Help Book",
+        category: "books",
+        price: 50,
+        rating: 4.7,
+        image: "https://via.placeholder.com/200x150.png?text=Book"
+      },
+      {
+        name: "Notebook",
+        category: "books",
+        price: 40,
+        rating: 3.5,
+        image: "https://via.placeholder.com/200x150.png?text=Notebook"
+      },
+      {
+        name: "Wall Clock",
+        category: "home",
+        price: 120,
+        rating: 4.3,
+        image: "https://via.placeholder.com/200x150.png?text=Wall+Clock"
+      },
+      {
+        name: "Table Lamp",
+        category: "home",
+        price: 150,
+        rating: 4.1,
+        image: "https://via.placeholder.com/200x150.png?text=Lamp"
+      },
+      {
+        name: "Bluetooth Speaker",
+        category: "electronics",
+        price: 399,
+        rating: 4.6,
+        image: "https://via.placeholder.com/200x150.png?text=Speaker"
+      },
+      {
+        name: "Casual Shirt",
+        category: "fashion",
+        price: 129,
+        rating: 4.0,
+        image: "https://via.placeholder.com/200x150.png?text=Shirt"
+      }
+    ];
+
+    const productList = document.getElementById('productList');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const priceFilter = document.getElementById('priceFilter');
+    const sortByRating = document.getElementById('sortByRating');
+
+    function renderProducts(filteredProducts) {
+      productList.innerHTML = '';
+      filteredProducts.forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'product';
+        item.innerHTML = `
+          <img src="${p.image}" alt="${p.name}">
+          <h3>${p.name}</h3>
+          <p class="price">₹${p.price}</p>
+          <p>Category: ${p.category}</p>
+          <p class="rating">⭐ ${p.rating}</p>
+        `;
+        productList.appendChild(item);
+      });
+    }
+
+    function filterAndSort() {
+      let filtered = [...products];
+
+      const category = categoryFilter.value;
+      const priceRange = priceFilter.value;
+      const sort = sortByRating.value;
+
+      if (category !== 'all') {
+        filtered = filtered.filter(p => p.category === category);
+      }
+
+      if (priceRange !== 'all') {
+        const [min, max] = priceRange.split('-').map(Number);
+        filtered = filtered.filter(p => p.price >= min && p.price <= max);
+      }
+
+      if (sort === 'high') {
+        filtered.sort((a, b) => b.rating - a.rating);
+      } else if (sort === 'low') {
+        filtered.sort((a, b) => a.rating - b.rating);
+      }
+
+      renderProducts(filtered);
+    }
+
+    categoryFilter.addEventListener('change', filterAndSort);
+    priceFilter.addEventListener('change', filterAndSort);
+    sortByRating.addEventListener('change', filterAndSort);
+
+    renderProducts(products);
+  </script>
+</body>
+</html>
