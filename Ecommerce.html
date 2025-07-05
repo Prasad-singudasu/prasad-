@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Products - E-Commerce</title>
+  <link rel="stylesheet" href="Ecommerce.css" />
+  <style>
+  body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    background-color: #576c81;
+    }
+    header {
+      background: #1f3b57;
+      color: white;
+      padding: 1rem;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      text-align: center;
+    }
+
+    .header-top h1 {
+      margin: 0;
+    }
+
+    .header-top img {
+      width: 60px;
+      height: 60px;
+    }
+
+    .navbar {
+      background: #1f3b57;
+      text-align: center;
+    }
+
+    .navbar nav {
+      padding: 0.5rem;
+    }
+
+    .navbar nav a {
+      margin: 0 10px;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .navbar nav a:hover {
+      text-decoration: underline;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .filters select, .filters input {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .product-list {
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .product {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .product img {
+      max-width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .wishlist-btn {
+      background: #ff69b4;
+      color: #fff;
+      border: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #2ecc71;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+    </style>
+    </head>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <h1>Welcome to Our Mini Bazzar!</h1>
+    <img src="https://cdn-icons-png.flaticon.com/512/2038/2038767.png" alt="Shopping Icon">
+  </div>
+</header>
+<div class="navbar">
+  <nav>
+    <a href="Ecommerce.html">Home</a>
+    <a href="productpage.html">Products</a>
+    <a href="Wishlist.html">Wishlist</a>
+    <a href="Cart.html">Cart (<span id="cart-count">0</span>)</a>
+    <a href="PlaceOrder.html">Place Order</a>
+  </nav>
+</div>
+
+<section class="filters">
+  <input type="text" id="searchBar" placeholder="Search..." />
+  <select id="categoryFilter">
+    <option value="All">All Categories</option>
+    <option value="Electronics">Electronics</option>
+    <option value="Clothing">Clothing</option>
+    <option value="Books">Books</option>
+    <option value="cosmetics">Cosmetics</option>
+    <option value="Groceries">Groceries</option>
+    <option value="Footwear">Footwear</option>
+  </select>
+  <select id="priceFilter">
+    <option value="All">All Prices</option>
+    <option value="0-500">Below ₹500</option>
+    <option value="501-1000">₹501 - ₹1000</option>
+    <option value="1001-999999">Above ₹1000</option>
+  </select>
+  <select id="sortOption">
+    <option value="default">Sort By</option>
+    <option value="price-asc">Price: Low to High</option>
+    <option value="price-desc">Price: High to Low</option>
+    <option value="rating-desc">Rating: High to Low</option>
+  </select>
+</section>
+
+<section class="product-list" id="productList"></section>
+<div id="toast" class="toast">Product added to cart!</div>
+<script>
+const products = [
+  { name: "Bangles", category:"cosmetics", price: 1600, rating: 4.1, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwvD0Y4Y7xNxqPwojmkUy3PrTOcVEWpF8YBA&s" },
+  { name: "Biography", category:"Books", price: 800,rating: 4.2,img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZ4Uh9zVJaHWMmBwDFcn5iE1RAybbWyJJAKQ&s" },
+  { name: "jeans",category:"Clothing",price: 750, rating:4.4, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPQnaoSE5rwAyhdAlmLztjp1rnlRZ-xDL3gw&s" },
+  { name: "Dress", category: "Clothing", price: 400, rating: 4.2, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr7BxXIoRoPAc6Y-DhUrkL8SXnNwQHrFsxyw&s" },
+  { name: "Dry fruits", category:"Groceries",price:450,rating:4.0,img:"https://eatanytime.in/cdn/shop/files/MiniDryFruits-912399.png?v=1714830184" },
+  { name: "Earings", category:"cosmetics", price:1000, rating:4.0, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbFDt5PhpfEdTNH2EzEI4Z50hCfVcKMSkqYQ&s" },
+  { name: "GreenTea", category:"Groceries", price: 300, rating: 4.2,img:"https://foodcare.in/cdn/shop/files/GREENTEABAG.jpg?v=1725364792&width=1445" },
+  { name: "Jewellery", category:"cosmetics", price: 2500, rating: 4.5, img:"https://5.imimg.com/data5/TG/DN/MY-37294786/designer-artificial-jewellery.jpg"},
+  { name: "Kid's frock", category:"Clothing", price: 600, rating: 4.2, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRue2qEV_8MVl8DKrYgcTpuC5dyAU_YSUe6QpCCqnsikiUAb1SjeWeKZwNe98KN6-3OoT0&usqp=CAU"},
+  { name: "Laptop", category: "Electronics", price: 15000, rating: 4.3, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSi0hDlM74lUG1rmLPkiW5S1PJExeoFOSu3yg&s" },
+  { name: "Men's Suit", category: "Clothing", price: 1200, rating: 4.6, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCQ_GJfiukEBjMAnzwI0_MT7qk_LQuKSk2hQ&s" },
+  { name: "Men's T-shirt", category:"Clothing",price: 500, rating: 3.8, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmYSwkWGc7dr4sm74Pz0SaP2DgKY0zO3iA_w&s"},
+  { name: "Necklace", category:"cosmetics", price:650,rating:3.8,img:"https://www.orra.co.in/media/catalog/product/cache/0223386358b565e9d65c640854c3ad24/o/n/ons23022.jpg" },
+  { name: "Novel", category: "Books", price: 350, rating: 3.9, img: "https://m.media-amazon.com/images/I/51xwFZin4pL._UF1000,1000_QL80_.jpg" },
+  { name: "Rice pack",category:"Groceries",price: 1400, rating: 4.3, img:"https://4.imimg.com/data4/GQ/RU/ANDROID-53192496/product-500x500.jpeg" },
+  { name: "shoes", category:"Footwear", price: 900, rating: 3.9,img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSac3ZdJ8aUOaEnsec0w-qiYGass_Hb9sPGaQ&s" },
+  { name: "Slippers", category:"Footwear", price: 300, rating: 3.5, img:"https://4.imimg.com/data4/LD/DI/GLADMIN-2068720/ladies-footwear-wn-706-500x500.png",},
+  { name: "Smart Watch", category: "Electronics", price: 3000, rating: 4.8, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQx0vLWpMO4yNv6IrH6kCMib4Z3xj3PYR0OCA&s"},
+  { name: "Smartphone", category: "Electronics", price: 8000, rating: 4.5, img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTjcfMNgM5CCkzyyxsgFI8itB8ezzL7_gLgw&s" },
+  { name: "women's Saree", category:"Clothing",price:1000, rating: 4.0, img:"https://www.distacart.com/cdn/shop/products/JQVrQhH9WX_240x.jpg?v=1686294833" }
+];
+
+
+  const productList = document.getElementById("productList");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const priceFilter = document.getElementById("priceFilter");
+    const sortOption = document.getElementById("sortOption");
+    const searchBar = document.getElementById("searchBar");
+    const toast = document.getElementById("toast");
+
+    function showToast() {
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2000);
+    }
+
+    function addToCart(name) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push(name);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      document.getElementById("cart-count").innerText = cart.length;
+      showToast();
+    }
+
+    function addToWishlist(name) {
+      let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+      if (!wishlist.includes(name)) {
+        wishlist.push(name);
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+        alert("Added to wishlist!");
+      }
+    }
+
+    function displayProducts(list) {
+      productList.innerHTML = "";
+      if (list.length === 0) {
+        productList.innerHTML = "<p style='text-align:center'>No products found.</p>";
+        return;
+      }
+      list.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" />
+          <h3>${p.name}</h3>
+          <div class="price">₹${p.price}</div>
+          <div class="rating">⭐ ${p.rating}</div>
+          <button onclick="addToCart('${p.name}')">Add to Cart</button>
+          <button class="wishlist-btn" onclick="addToWishlist('${p.name}')">♡ Wishlist</button>
+        `;
+        productList.appendChild(div);
+      });
+    }
+
+    function applyFilters() {
+      let filtered = [...products];
+      const category = categoryFilter.value;
+      const priceRange = priceFilter.value;
+      const sort = sortOption.value;
+      const search = searchBar.value.toLowerCase();
+
+      if (category !== "All") filtered = filtered.filter(p => p.category === category);
+      if (priceRange !== "All") {
+        const [min, max] = priceRange.split("-").map(Number);
+        filtered = filtered.filter(p => p.price >= min && p.price <= max);
+      }
+      if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
+
+      if (sort === "price-asc") filtered.sort((a, b) => a.price - b.price);
+      else if (sort === "price-desc") filtered.sort((a, b) => b.price - a.price);
+      else if (sort === "rating-desc") filtered.sort((a, b) => b.rating - a.rating);
+
+      displayProducts(filtered);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      document.getElementById("cart-count").innerText = cart.length;
+      applyFilters();
+    });
+
+    categoryFilter.addEventListener("change", applyFilters);
+    priceFilter.addEventListener("change", applyFilters);
+    sortOption.addEventListener("change", applyFilters);
+    searchBar.addEventListener("input", applyFilters);
+    </script>
+
+</body>
+</html>
